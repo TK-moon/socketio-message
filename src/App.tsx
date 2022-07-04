@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -9,9 +10,11 @@ import {
 import Main from "./pages/Main";
 import LoginPage from "./pages/Login";
 import Messages from "./pages/Messages";
+import { StateContext } from "./store/authProvider";
 
 const PrivateRoute = ({ children, ...rest }: { children: JSX.Element }) => {
-  const isLoggedIn = false;
+  const isLoggedIn = useContext(StateContext).isLoggedIn;
+
   const location = useLocation();
 
   if (!isLoggedIn)

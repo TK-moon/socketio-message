@@ -2,6 +2,7 @@ import { useContext, useCallback } from "react";
 import { useNavigate, useLocation, Location } from "react-router-dom";
 import { initSessionStorage, SESSION_STORAGE_KEYS } from "../../lib/utils";
 import { DispatchContext } from "../../store/authProvider";
+import * as Style from "./index.style";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -11,35 +12,43 @@ const LoginPage = () => {
   const from = locationState.from.pathname || "/";
 
   const dispatchStore = useContext(DispatchContext);
-  const sessionStorageForLoggedIn = useCallback(
+  const authSessionStorage = useCallback(
     () => initSessionStorage(SESSION_STORAGE_KEYS.AUTH),
     []
   )();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    //   event.preventDefault();
-    //   const formData = new FormData(event.currentTarget);
-    //   const username = formData.get("username") as string;
-    //   navigate(from, { replace: true });
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const form = {
+      id: formData.get("id") as string,
+      password: formData.get("password") as string,
+      username: formData.get("username") as string,
+    };
+
+    dispatchStore({ type: "SET_LOGIN", value: form });
+    authSessionStorage?.save(form);
+    navigate(from, { replace: true });
   };
 
   return (
-    <div>
-      {/* <p>You must log in to view the page at {from}</p> */}
-
-      <form onSubmit={handleSubmit}>
+    <Style.Container>
+      <Style.Form onSubmit={handleSubmit}>
         <label>
-          id: <input name="username" type="text" />
+          <p>ID</p>
+          <Style.Input name="id" type="text" />
         </label>
         <label>
-          password: <input name="username" type="text" />
+          <p>PASSWORD</p>
+          <Style.Input name="password" type="password" />
         </label>{" "}
         <label>
-          Username: <input name="username" type="text" />
+          <p>USERNAME</p>
+          <Style.Input name="username" type="text" autoComplete="nope" />
         </label>{" "}
         <button type="submit">Login</button>
-      </form>
-    </div>
+      </Style.Form>
+    </Style.Container>
   );
 };
 

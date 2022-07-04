@@ -8,7 +8,7 @@ type authProviderState = {
   info: {
     id: string;
     password: string;
-    userName: string;
+    username: string;
   };
 };
 
@@ -18,14 +18,14 @@ const contextInit = {
   info: {
     id: sessionStorageData?.id ?? "",
     password: sessionStorageData?.password ?? "",
-    userName: sessionStorageData?.userName ?? "",
+    username: sessionStorageData?.username ?? "",
   },
 };
 
 export type StoreAction =
   | {
       type: "SET_LOGIN";
-      value: { id: string; password: string; userName: string };
+      value: { id: string; password: string; username: string };
     }
   | { type: "SET_LOGOUT" };
 
@@ -46,7 +46,7 @@ const reducer = (
         info: {
           id: action.value.id,
           password: action.value.password,
-          userName: action.value.userName,
+          username: action.value.username,
         },
       };
     case "SET_LOGOUT":
@@ -56,7 +56,7 @@ const reducer = (
         info: {
           id: "",
           password: "",
-          userName: "",
+          username: "",
         },
       };
     default:
