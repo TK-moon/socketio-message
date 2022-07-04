@@ -7,6 +7,10 @@ const GlobalStyle = createGlobalStyle`
   body, p {
     margin: 0;
   }
+
+  #portalRoot {
+    position: fixed;
+  }
 `;
 
 export default GlobalStyle;
