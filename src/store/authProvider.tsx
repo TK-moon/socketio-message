@@ -7,7 +7,7 @@ type authProviderState = {
   isLoggedIn: boolean;
   info: {
     id: string;
-    password: string;
+    userid: string;
     username: string;
   };
 };
@@ -17,7 +17,7 @@ const contextInit = {
   isLoggedIn: sessionStorageData?.id ? true : false,
   info: {
     id: sessionStorageData?.id ?? "",
-    password: sessionStorageData?.password ?? "",
+    userid: sessionStorageData?.userid ?? "",
     username: sessionStorageData?.username ?? "",
   },
 };
@@ -25,7 +25,7 @@ const contextInit = {
 export type StoreAction =
   | {
       type: "SET_LOGIN";
-      value: { id: string; password: string; username: string };
+      value: { id: string; userid: string; username: string };
     }
   | { type: "SET_LOGOUT" };
 
@@ -45,7 +45,7 @@ const reducer = (
         isLoggedIn: true,
         info: {
           id: action.value.id,
-          password: action.value.password,
+          userid: action.value.userid,
           username: action.value.username,
         },
       };
@@ -55,7 +55,7 @@ const reducer = (
         isLoggedIn: false,
         info: {
           id: "",
-          password: "",
+          userid: "",
           username: "",
         },
       };

@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Location } from "react-router-dom";
 import { initSessionStorage, SESSION_STORAGE_KEYS } from "../../lib/utils";
 import { DispatchContext } from "../../store/authProvider";
 import * as Style from "./index.style";
+import { login } from "../../api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const LoginPage = () => {
     []
   )();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const form = {
@@ -26,10 +27,23 @@ const LoginPage = () => {
       username: formData.get("username") as string,
     };
 
-    dispatchStore({ type: "SET_LOGIN", value: form });
-    authSessionStorage?.save(form);
-
-    navigate(from, { replace: true });
+    try {
+      const response = await login(form.id, form.password);
+      if (!response) throw new Error("no user");
+      const data = {
+        id: response.id,
+        userid: response.userid,
+        username: response.username,
+      };
+      dispatchStore({
+        type: "SET_LOGIN",
+        value: data,
+      });
+      authSessionStorage?.save(data);
+      navigate(from, { replace: true });
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
@@ -42,10 +56,6 @@ const LoginPage = () => {
         <label>
           <p>PASSWORD</p>
           <Style.Input name="password" type="password" />
-        </label>{" "}
-        <label>
-          <p>USERNAME</p>
-          <Style.Input name="username" type="text" autoComplete="nope" />
         </label>{" "}
         <button type="submit">Login</button>
       </Style.Form>
