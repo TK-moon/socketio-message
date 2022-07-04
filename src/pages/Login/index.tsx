@@ -28,6 +28,7 @@ const LoginPage = () => {
 
     dispatchStore({ type: "SET_LOGIN", value: form });
     authSessionStorage?.save(form);
+
     navigate(from, { replace: true });
   };
 
