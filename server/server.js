@@ -2,8 +2,11 @@ const express = require("express");
 const http = require("http");
 const app = express();
 const server = http.createServer(express);
+const cors = require("cors");
 const port = 3001;
 const io = require("socket.io")(server);
+
+app.use(cors({ origin: "*", credentials: true }));
 
 class ChatRoom {
   constructor() {
@@ -29,6 +32,8 @@ const chatRoom = new ChatRoom();
 app.get("/", (req, res) => {
   res.json({ server: true });
 });
+
+app.get("/auth/login", (req, res) => {});
 
 app.get("/chat/list", (req, res) => {
   const roomList = chatRoom.list();
