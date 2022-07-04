@@ -12,27 +12,6 @@ app.use(cors({ origin: "*", credentials: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-class ChatRoom {
-  constructor() {
-    this.chatRoom = new Array(100).fill(0);
-  }
-
-  add(roomName) {
-    const id = this.ranking.length + 1;
-    this.chatRoom.push({ roomName: roomName, roomId: id });
-  }
-
-  list() {
-    return this.chatRoom;
-  }
-
-  [Symbol.iterator]() {
-    return this.ranking.values();
-  }
-}
-
-const chatRoom = new ChatRoom();
-
 app.get("/", (req, res) => {
   res.json({ server: true });
 });
@@ -51,13 +30,23 @@ app.post("/auth/login", (req, res) => {
   );
 });
 
-app.get("/chat/list", (req, res) => {
-  const roomList = chatRoom.list();
-  const data = JSON.stringify(roomList);
-  res.json(data);
+app.post("/chat/room/create", (req, res) => {
+  db.query(
+    `INSERT INTO chat_room(name) VALUES ('${req.body.roomName}')`,
+    (error, result) => {
+      console.log(result);
+    }
+  );
 });
 
-app.get("/chat/detail/:id", (req, res) => {});
+app.get("/user/list", (req, res) => {
+  db.query(
+    `SELECT * FROM user WHERE id!='${req.query.myUID}'`,
+    (err, result) => {
+      res.json(result);
+    }
+  );
+});
 
 app.listen(port, () => {
   console.log(`Server Lisetn on http://localhost:${port}`);
