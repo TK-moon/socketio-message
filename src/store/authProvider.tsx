@@ -14,11 +14,11 @@ type authProviderState = {
 
 const sessionStorageData = sessionStorageForLoggedIn?.load();
 const contextInit = {
-  isLoggedIn: sessionStorageData.id ? true : false,
+  isLoggedIn: sessionStorageData?.id ? true : false,
   info: {
-    id: sessionStorageData.id,
-    password: sessionStorageData.password,
-    userName: sessionStorageData.userName,
+    id: sessionStorageData?.id ?? "",
+    password: sessionStorageData?.password ?? "",
+    userName: sessionStorageData?.userName ?? "",
   },
 };
 

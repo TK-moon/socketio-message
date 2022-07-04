@@ -20,8 +20,8 @@ export const initSessionStorage = (key: SESSION_STORAGE_KEYS_TYPE) => {
 
   const load = () => {
     try {
-      const value = sessionStorage.getItem(key);
-      return JSON.parse(value ?? '');
+      const value = sessionStorage.getItem(key) ?? '{}';
+      return JSON.parse(value);
     } catch (error) {
       console.error(error);
     }
