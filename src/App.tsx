@@ -1,25 +1,42 @@
-import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+
+import Main from "./pages/Main";
+import LoginPage from "./pages/Login";
+import Messages from "./pages/Messages";
+
+const PrivateRoute = ({ children, ...rest }: { children: JSX.Element }) => {
+  const isLoggedIn = false;
+  const location = useLocation();
+
+  if (!isLoggedIn)
+    return <Navigate to="/login" state={{ from: location }} replace />;
+
+  return children;
+};
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/messages"
+          element={
+            <PrivateRoute>
+              <Messages />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
