@@ -1,7 +1,10 @@
 import * as Style from "./index.style";
+import { useQuery } from "react-query";
+import { getChatRoomList } from "../../api";
 
 const Messages = () => {
-  const data = new Array(100).fill(0);
+  const { data } = useQuery(["chat-room-list"], () => getChatRoomList("0"), {});
+  console.log(data);
 
   return (
     <Style.Container>
@@ -10,9 +13,9 @@ const Messages = () => {
         <nav>
           <Style.SubHeader>asdf</Style.SubHeader>
           <ul>
-            {data.map((item) => {
+            {/* {data.map((item) => {
               return <li>asdf</li>;
-            })}
+            })} */}
           </ul>
         </nav>
       </Style.Panel>

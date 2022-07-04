@@ -5,17 +5,9 @@ const server = http.createServer(express);
 const port = 3001;
 const io = require("socket.io")(server);
 
-app.get("/", (req, res) => {
-  res.json({ server: true });
-});
-
-app.listen(port, () => {
-  console.log(`Server Lisetn on http://localhost:${port}`);
-});
-
 class ChatRoom {
   constructor() {
-    this.chatRoom = [0, 0, 0, 0, 0, 0];
+    this.chatRoom = new Array(100).fill(0);
   }
 
   add(roomName) {
@@ -34,9 +26,18 @@ class ChatRoom {
 
 const chatRoom = new ChatRoom();
 
+app.get("/", (req, res) => {
+  res.json({ server: true });
+});
+
 app.get("/chat/list", (req, res) => {
   const roomList = chatRoom.list();
-  console.log(roomList);
+  const data = JSON.stringify(roomList);
+  res.json(data);
 });
 
 app.get("/chat/detail/:id", (req, res) => {});
+
+app.listen(port, () => {
+  console.log(`Server Lisetn on http://localhost:${port}`);
+});
