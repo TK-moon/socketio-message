@@ -4,9 +4,12 @@ const app = express();
 const server = http.createServer(express);
 const cors = require("cors");
 const bodyParser = require("body-parser");
+
 const port = 3001;
-const io = require("socket.io")(server);
 const db = require("./db");
+
+const socketIO = require("socket.io");
+const io = socketIO(server, { path: "/io", cors: { origin: "*" } });
 
 app.use(cors({ origin: "*", credentials: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -48,6 +51,14 @@ app.get("/user/list", (req, res) => {
   );
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server Lisetn on http://localhost:${port}`);
+});
+
+// --------------SOCKET-------------------
+
+const chatNamespace = io.of("/chat");
+
+chatNamespace.on("connection", function (socket) {
+  console.log("a user connected");
 });

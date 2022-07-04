@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useContext } from "react";
 import { StateContext } from "../../../store/authProvider";
 import { getUserList } from "../../../api";
 import Modal from "../../../components/Modal";
 import * as Style from "./index.style";
+import socket from "socket.io-client";
+const io = socket("localhost:3001/chat", { path: "/io" });
 
 const ChatRoomList = () => {
   const store = useContext(StateContext);
@@ -18,6 +20,8 @@ const ChatRoomList = () => {
   const onCreateRoom = (receiverUID: string) => {
     console.log(receiverUID);
   };
+
+  useEffect(() => {}, []);
 
   return (
     <>
