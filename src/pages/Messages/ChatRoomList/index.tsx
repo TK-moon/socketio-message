@@ -61,14 +61,15 @@ const ChatRoomList = ({
           {chatRoomList.map((item) => {
             return (
               <li key={`${item.id}`}>
-                {getRoomAnchorHash(item, userUID)}
                 <Link
                   to={{
                     pathname: "detail",
                     hash: getRoomAnchorHash(item, userUID),
                   }}
                 >
-                  {item.senderName}
+                  {getRoomAnchorHash(item, userUID)}
+                  <p>{item.senderName}</p>
+                  <p>{item.body}</p>
                 </Link>
               </li>
             );

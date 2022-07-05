@@ -63,6 +63,23 @@ app.get("/chat/room/list", (req, res) => {
   });
 });
 
+app.get("/chat/room/detail", (req, res) => {
+  console.log(req.query);
+  const query = `
+  SELECT
+  *,
+  (SELECT username from user WHERE id=sender_id) as senderName,
+  (SELECT username from user WHERE id=receiver_id) as receiverName
+  FROM chat_message
+  WHERE sender_id=${req.query.senderUID} AND receiver_id=${req.query.receiverUID} OR sender_id=${req.query.receiverUID} AND receiver_id=${req.query.senderUID}
+  LIMIT ${req.query.skip}, ${req.query.limit};
+  `;
+  db.query(query, (error, result) => {
+    console.log(result);
+    res.json(result);
+  });
+});
+
 // --------------SOCKET-------------------
 
 const sockerPort = 3002;

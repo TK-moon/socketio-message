@@ -35,3 +35,7 @@ export const initSessionStorage = (key: SESSION_STORAGE_KEYS_TYPE) => {
 
   return { save, load };
 };
+
+export const extractNumber = (hash: string) => {
+  return hash.replace(/[^0-9]/g, "");
+};

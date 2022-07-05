@@ -18,7 +18,6 @@ const Messages = () => {
 
   const { data: chatRoomList, isLoading: chatRoomListIsLoading } =
     useChatRoomList(userInfo.id);
-  console.log(chatRoomList);
 
   // const { data: chatRoomList } = useQuery(
   //   ["chat-room-list", userInfo.id],
