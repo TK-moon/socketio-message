@@ -88,6 +88,10 @@ chatNamespace.on("connection", function (socket) {
     const roomID = getRoomId(data.senderUID, data.receiverUID);
     console.log(roomID, "join room");
     socket.join(roomID);
+    db.query(
+      `UPDATE chat_message SET is_read=1 WHERE sender_id='${data.receiverUID}' AND receiver_id=${data.senderUID}`,
+      (error, result) => {}
+    );
   });
 
   socket.on("message", (data) => {
