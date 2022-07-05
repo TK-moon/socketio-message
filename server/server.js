@@ -9,17 +9,21 @@ const port = 3001;
 const db = require("./db");
 
 const socketIO = require("socket.io");
-const io = socketIO(server, { path: "/io", cors: { origin: "*" } });
 
 app.use(cors({ origin: "*", credentials: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.listen(port, () => {
+  console.log(`Server Lisetn on http://localhost:${port}`);
+});
 
 app.get("/", (req, res) => {
   res.json({ server: true });
 });
 
 app.post("/auth/login", (req, res) => {
+  console.log("LOGIN", req.body.id, req.body.password);
   db.query(
     `SELECT * FROM user WHERE userid='${req.body.id}' AND password='${req.body.password}'`,
     (error, result) => {
@@ -51,11 +55,13 @@ app.get("/user/list", (req, res) => {
   );
 });
 
-server.listen(port, () => {
-  console.log(`Server Lisetn on http://localhost:${port}`);
-});
-
 // --------------SOCKET-------------------
+
+const sockerPort = 3002;
+const socketServer = http.createServer(express);
+socketServer.listen(sockerPort);
+
+const io = socketIO(socketServer, { path: "/io", cors: { origin: "*" } });
 
 const chatNamespace = io.of("/chat");
 

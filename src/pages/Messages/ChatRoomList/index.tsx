@@ -6,7 +6,7 @@ import { getUserList } from "../../../api";
 import Modal from "../../../components/Modal";
 import * as Style from "./index.style";
 import socket from "socket.io-client";
-const io = socket("localhost:3001/chat", { path: "/io" });
+const io = socket("localhost:3002/chat", { path: "/io" });
 
 const ChatRoomList = () => {
   const store = useContext(StateContext);
