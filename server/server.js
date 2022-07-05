@@ -47,6 +47,11 @@ app.get("/user/list", (req, res) => {
 });
 
 app.get("/chat/room/list", (req, res) => {
+  /**
+   * @BUG
+   * senderid와 receiverid를 GROUP BY 해서 문제
+   * 채팅방 이름 컬럼 추가하기
+   */
   const query = `
   SELECT
   *,
