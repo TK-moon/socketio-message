@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
 
   #portalRoot {
     position: fixed;
+    top: 0;
   }
 `;
 

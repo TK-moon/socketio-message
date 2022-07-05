@@ -23,7 +23,7 @@ const Messages = () => {
   const onCreateRoomClick = (senderUID: string, receiverUID: string) => {
     io.emit("enter-room", { senderUID, receiverUID });
     setRoom(receiverUID);
-    navigate("/messages/detail#1");
+    navigate(`/messages/detail#${receiverUID}`);
   };
 
   const onLeaveRoomClick = (senderUID: string, receiverUID: string) => {

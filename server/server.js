@@ -83,6 +83,9 @@ chatNamespace.on("connection", function (socket) {
 
   socket.on("message", (data) => {
     console.log(data);
+    // db.query(
+    //   `INSERT INTO chat_message(body, isRead sender_id, receiver_id type) VALUES ()`
+    // );
     const roomID = getRoomId(data.senderUID, data.receiverUID);
     io.of("/chat").to(roomID).emit("message", data);
   });
