@@ -6,6 +6,8 @@ import { useContext } from "react";
 import { StateContext } from "../../store/authProvider";
 import ChatRoomList from "./ChatRoomList";
 import ChatDetail from "./ChatDetail";
+import { useQuery } from "react-query";
+import { getChatRoomList } from "../../api";
 
 const Messages = () => {
   const store = useContext(StateContext);
@@ -14,6 +16,13 @@ const Messages = () => {
     () => socket("localhost:3002/chat", { path: "/io" }),
     []
   );
+
+  const { data } = useQuery(
+    ["chat-room-list", userInfo.id],
+    () => getChatRoomList(userInfo.id),
+    {}
+  );
+  console.log(data);
 
   const navigate = useNavigate();
   const location = useLocation();

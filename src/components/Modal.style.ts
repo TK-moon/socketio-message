@@ -9,7 +9,7 @@ export const Container = styled.div<{ visible: boolean }>`
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
   display: ${p => p.visible ? 'flex' : 'none'};
-  z-index: 10000;
+  z-index: 1000;
 `
 
 export const Body = styled.div`

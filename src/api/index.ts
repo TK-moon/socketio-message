@@ -13,7 +13,7 @@ export const getUserList = async (myUID: string) => {
   return response.data
 }
 
-export const createChatRoom = async (roomName: string) => {
-  const response = await api.post('/chat/room/create', { roomName: roomName })
+export const getChatRoomList = async (UID: string) => {
+  const response = await api.get('/chat/room/list', { params: { UID: UID } })
   return response.data
 }

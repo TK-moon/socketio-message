@@ -37,15 +37,6 @@ app.post("/auth/login", (req, res) => {
   );
 });
 
-app.post("/chat/room/create", (req, res) => {
-  db.query(
-    `INSERT INTO chat_room(name) VALUES ('${req.body.roomName}')`,
-    (error, result) => {
-      console.log(result);
-    }
-  );
-});
-
 app.get("/user/list", (req, res) => {
   db.query(
     `SELECT * FROM user WHERE id!='${req.query.myUID}'`,
@@ -53,6 +44,24 @@ app.get("/user/list", (req, res) => {
       res.json(result);
     }
   );
+});
+
+app.get("/chat/room/list", (req, res) => {
+  const query = `
+  SELECT
+  *,
+  (SELECT username from user WHERE id=sender_id) as senderName,
+  (SELECT username from user WHERE id=receiver_id) as receiverName,
+  MAX(chat_message.created_at) as recentMessageTime
+  FROM chat_message
+  WHERE chat_message.sender_id='${req.query.UID}' OR chat_message.receiver_id='${req.query.UID}'
+  GROUP BY sender_id, receiver_id
+  ORDER BY chat_message.created_at DESC
+  `;
+  db.query(query, (err, result) => {
+    console.log(result);
+    res.json(result);
+  });
 });
 
 // --------------SOCKET-------------------
@@ -83,9 +92,9 @@ chatNamespace.on("connection", function (socket) {
 
   socket.on("message", (data) => {
     console.log(data);
-    // db.query(
-    //   `INSERT INTO chat_message(body, isRead sender_id, receiver_id type) VALUES ()`
-    // );
+    db.query(
+      `INSERT INTO chat_message(body, is_read, sender_id, receiver_id, type) VALUES('${data.body}', 1, ${data.senderUID}, ${data.receiverUID}, 'message')`
+    );
     const roomID = getRoomId(data.senderUID, data.receiverUID);
     io.of("/chat").to(roomID).emit("message", data);
   });
