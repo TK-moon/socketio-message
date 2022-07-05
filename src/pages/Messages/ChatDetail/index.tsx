@@ -28,6 +28,14 @@ const ChatDetail = ({
     socket.emit("message", arg);
   };
 
+  useEffect(() => {
+    console.log(userInfo.id, receiverUID);
+    socket.emit("enter-room", { senderUID: userInfo.id, receiverUID });
+    return () => {
+      socket.emit("leave-room", { senderUID: userInfo.id, receiverUID });
+    };
+  }, []);
+
   return (
     <>
       <Style.Header>

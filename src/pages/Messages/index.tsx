@@ -10,6 +10,10 @@ import { useQuery } from "react-query";
 import { getChatRoomList } from "../../api";
 
 const Messages = () => {
+  const extractNumber = (hash: string) => {
+    return hash.replace(/[^0-9]/g, "");
+  };
+
   const store = useContext(StateContext);
   const userInfo = store.info;
   const io: Socket = useMemo(
@@ -27,26 +31,26 @@ const Messages = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [room, setRoom] = useState<string | null>(null);
+  const [room, setRoom] = useState<string | null>(extractNumber(location.hash));
 
   const onCreateRoomClick = (senderUID: string, receiverUID: string) => {
-    io.emit("enter-room", { senderUID, receiverUID });
     setRoom(receiverUID);
     navigate(`/messages/detail#${receiverUID}`);
   };
 
   const onLeaveRoomClick = (senderUID: string, receiverUID: string) => {
-    io.emit("leave-room", { senderUID, receiverUID });
     setRoom(null);
     navigate("/messages");
   };
 
   useEffect(() => {
     if (!io) return;
-    console.log("asdf");
-    io.on("message", (data: any) => {
-      console.log("socketMessage", data);
-    });
+
+    const onMessage = (data: any) => {
+      console.log(data);
+    };
+
+    io.on("message", onMessage);
   }, []);
 
   return (

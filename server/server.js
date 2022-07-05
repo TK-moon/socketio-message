@@ -50,16 +50,16 @@ app.get("/chat/room/list", (req, res) => {
   const query = `
   SELECT
   *,
+  body as recentMessage,
   (SELECT username from user WHERE id=sender_id) as senderName,
   (SELECT username from user WHERE id=receiver_id) as receiverName,
   MAX(chat_message.created_at) as recentMessageTime
   FROM chat_message
   WHERE chat_message.sender_id='${req.query.UID}' OR chat_message.receiver_id='${req.query.UID}'
   GROUP BY sender_id, receiver_id
-  ORDER BY chat_message.created_at DESC
+  ORDER BY recentMessageTime DESC
   `;
   db.query(query, (err, result) => {
-    console.log(result);
     res.json(result);
   });
 });
@@ -91,11 +91,14 @@ chatNamespace.on("connection", function (socket) {
   });
 
   socket.on("message", (data) => {
-    console.log(data);
-    db.query(
-      `INSERT INTO chat_message(body, is_read, sender_id, receiver_id, type) VALUES('${data.body}', 1, ${data.senderUID}, ${data.receiverUID}, 'message')`
-    );
     const roomID = getRoomId(data.senderUID, data.receiverUID);
+    const roomMap = socket.adapter.rooms.get(roomID);
+    const isAnotherUserInRoom = roomMap ? roomMap.size > 1 : false;
+    const isRead = isAnotherUserInRoom ? 1 : 0;
+    // const isOnline = socket.adapter.rooms.get(roomID).length > 1;
+    db.query(
+      `INSERT INTO chat_message(body, is_read, sender_id, receiver_id, type) VALUES('${data.body}', '${isRead}', ${data.senderUID}, ${data.receiverUID}, 'message')`
+    );
     io.of("/chat").to(roomID).emit("message", data);
   });
 
