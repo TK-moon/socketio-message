@@ -6,14 +6,9 @@ import { useContext } from "react";
 import { StateContext } from "../../store/authProvider";
 import ChatRoomList from "./ChatRoomList";
 import ChatDetail from "./ChatDetail";
-import { useQuery } from "react-query";
-import { getChatRoomList } from "../../api";
+import useChatRoomList from "../../hooks/useChatRoomList";
 
 const Messages = () => {
-  const extractNumber = (hash: string) => {
-    return hash.replace(/[^0-9]/g, "");
-  };
-
   const store = useContext(StateContext);
   const userInfo = store.info;
   const io: Socket = useMemo(
@@ -21,25 +16,23 @@ const Messages = () => {
     []
   );
 
-  const { data } = useQuery(
-    ["chat-room-list", userInfo.id],
-    () => getChatRoomList(userInfo.id),
-    {}
-  );
-  console.log(data);
+  const { data: chatRoomList, isLoading: chatRoomListIsLoading } =
+    useChatRoomList(userInfo.id);
+  console.log(chatRoomList);
+
+  // const { data: chatRoomList } = useQuery(
+  //   ["chat-room-list", userInfo.id],
+  //   () => getChatRoomList(userInfo.id),
+  //   {}
+  // );
 
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const [room, setRoom] = useState<string | null>(extractNumber(location.hash));
 
   const onCreateRoomClick = (senderUID: string, receiverUID: string) => {
-    setRoom(receiverUID);
     navigate(`/messages/detail#${receiverUID}`);
   };
 
   const onLeaveRoomClick = (senderUID: string, receiverUID: string) => {
-    setRoom(null);
     navigate("/messages");
   };
 
@@ -58,8 +51,8 @@ const Messages = () => {
       <Style.Container>
         <Style.Panel>
           <ChatRoomList
+            chatRoomList={chatRoomList}
             socket={io}
-            setRoom={setRoom}
             onCreateRoomClick={onCreateRoomClick}
             userUID={userInfo.id}
           />
@@ -72,7 +65,6 @@ const Messages = () => {
                 <ChatDetail
                   socket={io}
                   onLeaveRoomClick={onLeaveRoomClick}
-                  receiverUID={room as string}
                   userInfo={userInfo}
                 />
               }

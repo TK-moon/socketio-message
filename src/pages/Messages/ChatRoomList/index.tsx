@@ -4,17 +4,32 @@ import { getUserList } from "../../../api";
 import Modal from "../../../components/Modal";
 import * as Style from "./index.style";
 import { Socket } from "socket.io-client";
+import { Link } from "react-router-dom";
+
+type chatRoomItem = {
+  body: string;
+  created_at: string;
+  id: number;
+  is_read: number;
+  receiverName: string;
+  receiver_id: number;
+  recentMessage: string;
+  recentMessageTime: string;
+  senderName: string;
+  sender_id: number;
+  type: "message" | "system";
+};
 
 interface ChatRoomListProp {
+  chatRoomList: chatRoomItem[];
   socket: Socket;
-  setRoom: React.Dispatch<React.SetStateAction<string | null>>;
   onCreateRoomClick: (senderUID: string, receiverUID: string) => void;
   userUID: string;
 }
 
 const ChatRoomList = ({
+  chatRoomList,
   socket,
-  setRoom,
   onCreateRoomClick,
   userUID,
 }: ChatRoomListProp) => {
@@ -29,6 +44,12 @@ const ChatRoomList = ({
     setModalVisible(false);
   };
 
+  const getRoomAnchorHash = (item: chatRoomItem, UID: string) => {
+    return String(item.sender_id) === String(UID)
+      ? String(item.receiver_id)
+      : String(item.sender_id);
+  };
+
   return (
     <>
       <Style.Header>
@@ -36,7 +57,23 @@ const ChatRoomList = ({
       </Style.Header>
       <nav>
         <Style.SubHeader></Style.SubHeader>
-        <ul></ul>
+        <ul>
+          {chatRoomList.map((item) => {
+            return (
+              <li key={`${item.id}`}>
+                {getRoomAnchorHash(item, userUID)}
+                <Link
+                  to={{
+                    pathname: "detail",
+                    hash: getRoomAnchorHash(item, userUID),
+                  }}
+                >
+                  {item.senderName}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
       <Modal visible={modalVisible}>
         <ul>

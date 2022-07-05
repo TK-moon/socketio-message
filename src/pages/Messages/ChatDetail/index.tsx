@@ -1,20 +1,26 @@
 import { FormEvent, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import * as Style from "./index.style";
 
 interface ChatDetailProps {
   onLeaveRoomClick: (senderUID: string, receiverUID: string) => void;
-  receiverUID: string;
   socket: Socket;
   userInfo: any;
 }
 
 const ChatDetail = ({
   onLeaveRoomClick,
-  receiverUID,
   socket,
   userInfo,
 }: ChatDetailProps) => {
+  const extractNumber = (hash: string) => {
+    return hash.replace(/[^0-9]/g, "");
+  };
+
+  const location = useLocation();
+  const receiverUID = extractNumber(location.hash);
+
   const [message, setMessage] = useState("");
 
   const onSubmit = (event: FormEvent) => {
