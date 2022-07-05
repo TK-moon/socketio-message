@@ -30,7 +30,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
-          path="/messages"
+          path="/messages/*"
           element={
             <PrivateRoute>
               <Messages />

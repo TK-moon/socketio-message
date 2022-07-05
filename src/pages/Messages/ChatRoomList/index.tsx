@@ -1,27 +1,33 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { useContext } from "react";
-import { StateContext } from "../../../store/authProvider";
 import { getUserList } from "../../../api";
 import Modal from "../../../components/Modal";
 import * as Style from "./index.style";
-import socket from "socket.io-client";
-const io = socket("localhost:3002/chat", { path: "/io" });
+import { Socket } from "socket.io-client";
 
-const ChatRoomList = () => {
-  const store = useContext(StateContext);
-  const uid = store.info.id;
+interface ChatRoomListProp {
+  socket: Socket;
+  setRoom: React.Dispatch<React.SetStateAction<string | null>>;
+  onCreateRoomClick: (senderUID: string, receiverUID: string) => void;
+  userUID: string;
+}
+
+const ChatRoomList = ({
+  socket,
+  setRoom,
+  onCreateRoomClick,
+  userUID,
+}: ChatRoomListProp) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const { data: userList } = useQuery(["user-list"], () =>
-    getUserList(store.info.id)
+    getUserList(userUID)
   );
 
-  const onCreateRoom = (receiverUID: string) => {
-    console.log(receiverUID);
+  const onUserListItemClick = (myUID: string, userUID: string) => {
+    onCreateRoomClick(myUID, userUID);
+    setModalVisible(false);
   };
-
-  useEffect(() => {}, []);
 
   return (
     <>
@@ -36,7 +42,10 @@ const ChatRoomList = () => {
         <ul>
           {userList?.map((user: any) => {
             return (
-              <li onClick={() => onCreateRoom(user.id)} key={user.id}>
+              <li
+                onClick={() => onUserListItemClick(userUID, user.id)}
+                key={user.id}
+              >
                 {user.username}
               </li>
             );

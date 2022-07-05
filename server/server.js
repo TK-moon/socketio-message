@@ -65,6 +65,35 @@ const io = socketIO(socketServer, { path: "/io", cors: { origin: "*" } });
 
 const chatNamespace = io.of("/chat");
 
+const getRoomId = (_uid1, _uid2) => {
+  const uid1 = Number(_uid1);
+  const uid2 = Number(_uid2);
+  const sortedUID = [uid1, uid2].sort();
+  return `${sortedUID[0]}-${sortedUID[1]}`;
+};
+
 chatNamespace.on("connection", function (socket) {
   console.log("a user connected");
+
+  socket.on("enter-room", (data) => {
+    const roomID = getRoomId(data.senderUID, data.receiverUID);
+    console.log(roomID, "join room");
+    socket.join(roomID);
+  });
+
+  socket.on("message", (data) => {
+    console.log(data);
+    const roomID = getRoomId(data.senderUID, data.receiverUID);
+    io.of("/chat").to(roomID).emit("message", data);
+  });
+
+  socket.on("leave-room", (data) => {
+    const roomID = getRoomId(data.senderUID, data.receiverUID);
+    console.log(roomID, "leave room");
+    socket.leave(roomID);
+  });
+
+  socket.on("disconnect", (data) => {
+    console.log(data);
+  });
 });
