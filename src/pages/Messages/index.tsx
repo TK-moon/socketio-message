@@ -15,15 +15,9 @@ const Messages = () => {
     () => socket("localhost:3002/chat", { path: "/io" }),
     []
   );
+  const { key } = useLocation();
 
-  const { data: chatRoomList, isLoading: chatRoomListIsLoading } =
-    useChatRoomList(userInfo.id);
-
-  // const { data: chatRoomList } = useQuery(
-  //   ["chat-room-list", userInfo.id],
-  //   () => getChatRoomList(userInfo.id),
-  //   {}
-  // );
+  const { data: chatRoomList } = useChatRoomList(userInfo.id);
 
   const navigate = useNavigate();
 
@@ -65,6 +59,7 @@ const Messages = () => {
                   socket={io}
                   onLeaveRoomClick={onLeaveRoomClick}
                   userInfo={userInfo}
+                  key={key}
                 />
               }
             ></Route>

@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { getPastMessages } from "../../../api";
+import useMessages from "../../../hooks/useMessages";
 import { extractNumber } from "../../../lib/utils";
 import * as Style from "./index.style";
 
@@ -21,18 +22,13 @@ const ChatDetail = ({
   const receiverUID = extractNumber(location.hash);
   const [message, setMessage] = useState("");
   const [page, setPage] = useState(1);
-  const { data: prevMessageList } = useQuery(
-    ["past-messages"],
-    () =>
-      getPastMessages({
-        senderUID: userInfo.id,
-        receiverUID: receiverUID,
-        page: page,
-      }),
-    {}
-  );
 
-  const [nextMessageList, setNextMessageList] = useState([]);
+  const { prevMessageList, nextMessageList } = useMessages({
+    senderUID: userInfo.id,
+    receiverUID,
+    page,
+    socket,
+  });
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -62,8 +58,11 @@ const ChatDetail = ({
       </Style.Header>
       <Style.Section>
         <ul>
-          {(prevMessageList ?? []).map((message: any) => {
+          {prevMessageList?.map((message: any) => {
             return <li key={message.id}>{message.body}</li>;
+          })}
+          {nextMessageList.map((message: any, index: number) => {
+            return <li key={`${index}-${message.body}`}>{message.body}</li>;
           })}
         </ul>
         <Style.Footer>

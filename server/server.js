@@ -64,7 +64,6 @@ app.get("/chat/room/list", (req, res) => {
 });
 
 app.get("/chat/room/detail", (req, res) => {
-  console.log(req.query);
   const query = `
   SELECT
   *,
@@ -75,7 +74,6 @@ app.get("/chat/room/detail", (req, res) => {
   LIMIT ${req.query.skip}, ${req.query.limit};
   `;
   db.query(query, (error, result) => {
-    console.log(result);
     res.json(result);
   });
 });
