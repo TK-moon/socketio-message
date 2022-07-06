@@ -48,23 +48,22 @@ app.get("/user/list", (req, res) => {
 });
 
 app.get("/chat/room/list", (req, res) => {
-  /**
-   * @TODO
-   * Total count 추가하여 전체 로딩되면 추가 로딩 불가능하도록 useQuery 옵션 추가
-   */
   const query = `
   SELECT
-  *,
+  CONCAT(LEAST(sender_id, receiver_id), '-' ,GREATEST(sender_id, receiver_id)) as roomId,
+  MAX(chat_message.created_at) as recentMessageTime,
+  id as recentMessageID,
   body as recentMessage,
+  sender_id as senderUID,
+  receiver_id as receiverUID,
   (SELECT username from user WHERE id=sender_id) as senderName,
-  (SELECT username from user WHERE id=receiver_id) as receiverName,
-  MAX(chat_message.created_at) as recentMessageTime
+  (SELECT username from user WHERE id=receiver_id) as receiverName
   FROM chat_message
   WHERE chat_message.sender_id=${req.query.UID} OR chat_message.receiver_id=${req.query.UID}
-  GROUP BY sender_id, receiver_id
-  HAVING sender_id=${req.query.UID} or receiver_id=${req.query.UID}
-  ORDER BY recentMessageTime DESC
+  GROUP BY roomId
+  ORDER BY recentMessageTime DESC;
   `;
+
   db.query(query, (err, result) => {
     res.json(result);
   });

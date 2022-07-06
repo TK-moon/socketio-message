@@ -6,24 +6,12 @@ import * as Style from "./index.style";
 import { Socket } from "socket.io-client";
 import { Link } from "react-router-dom";
 
-type chatRoomItem = {
-  body: string;
-  created_at: string;
-  id: number;
-  is_read: number;
-  receiverName: string;
-  receiver_id: number;
-  recentMessage: string;
-  recentMessageTime: string;
-  senderName: string;
-  sender_id: number;
-  type: "message" | "system";
-};
+import { ChatRoomListInerface } from "../../../hooks/useChatRoomList";
 
 interface ChatRoomListProp {
-  chatRoomList: chatRoomItem[];
+  chatRoomList: ChatRoomListInerface[];
   socket: Socket;
-  onCreateRoomClick: (senderUID: string, receiverUID: string) => void;
+  onCreateRoomClick: (receiverUID: string) => void;
   userUID: string;
 }
 
@@ -39,15 +27,15 @@ const ChatRoomList = ({
     getUserList(userUID)
   );
 
-  const onUserListItemClick = (myUID: string, userUID: string) => {
-    onCreateRoomClick(myUID, userUID);
+  const onUserListItemClick = (userUID: string) => {
+    onCreateRoomClick(userUID);
     setModalVisible(false);
   };
 
-  const getRoomAnchorHash = (item: chatRoomItem, UID: string) => {
-    return String(item.sender_id) === String(UID)
-      ? String(item.receiver_id)
-      : String(item.sender_id);
+  const getRoomAnchorHash = (item: ChatRoomListInerface, UID: string) => {
+    return String(item.senderUID) === String(UID)
+      ? String(item.receiverUID)
+      : String(item.senderUID);
   };
 
   return (
@@ -60,7 +48,7 @@ const ChatRoomList = ({
         <ul>
           {chatRoomList.map((item) => {
             return (
-              <li key={`${item.id}`}>
+              <li key={`${item.roomId}`}>
                 <Link
                   to={{
                     pathname: "detail",
@@ -69,7 +57,7 @@ const ChatRoomList = ({
                 >
                   {getRoomAnchorHash(item, userUID)}
                   <p>{item.senderName}</p>
-                  <p>{item.body}</p>
+                  <p>{item.recentMessage}</p>
                 </Link>
               </li>
             );
@@ -80,10 +68,7 @@ const ChatRoomList = ({
         <ul>
           {userList?.map((user: any) => {
             return (
-              <li
-                onClick={() => onUserListItemClick(userUID, user.id)}
-                key={user.id}
-              >
+              <li onClick={() => onUserListItemClick(user.id)} key={user.id}>
                 {user.username}
               </li>
             );

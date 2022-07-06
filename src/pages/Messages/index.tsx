@@ -21,23 +21,15 @@ const Messages = () => {
 
   const navigate = useNavigate();
 
-  const onCreateRoomClick = (senderUID: string, receiverUID: string) => {
+  const onCreateRoomClick = (receiverUID: string) => {
     navigate(`/messages/detail#${receiverUID}`);
   };
 
-  const onLeaveRoomClick = (senderUID: string, receiverUID: string) => {
+  const onLeaveRoomClick = () => {
     navigate("/messages");
   };
 
-  useEffect(() => {
-    if (!io) return;
-
-    const onMessage = (data: any) => {
-      console.log(data);
-    };
-
-    io.on("message", onMessage);
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>

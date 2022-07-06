@@ -20,7 +20,7 @@ import * as Style from "./index.style";
 import ChatMessageListItem from "./ChatMessageListItem";
 
 interface ChatDetailProps {
-  onLeaveRoomClick: (senderUID: string, receiverUID: string) => void;
+  onLeaveRoomClick: () => void;
   socket: Socket;
   userInfo: any;
 }
@@ -74,7 +74,7 @@ const ChatDetail = ({
     return () => {
       socket.emit("leave-room", { senderUID: userInfo.id, receiverUID });
     };
-  }, [userInfo.id]);
+  }, [socket, userInfo.id]);
 
   const debounceSetBaseIdForPrevMesasge = useCallback(
     debounce(() => {
@@ -113,9 +113,7 @@ const ChatDetail = ({
   return (
     <>
       <Style.Header>
-        <button onClick={() => onLeaveRoomClick(userInfo.id, receiverUID)}>
-          BACK
-        </button>
+        <button onClick={() => onLeaveRoomClick()}>BACK</button>
         {baseID}
         <p>total : {totalCount}</p>
       </Style.Header>
