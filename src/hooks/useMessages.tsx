@@ -31,10 +31,12 @@ const useMessages = ({
       }),
     {
       onSuccess: (data) => {
+        const dbTotalCount = data.totalCount;
         const newList = [...data.list, ...prevMessageList];
+        const localTotalCount = newList.length + nextMessageList.length;
         setPrevMessageList(newList);
-        setTotalCount(data.totalCount);
-        if (newList.length === totalCount) {
+        setTotalCount(dbTotalCount);
+        if (localTotalCount >= dbTotalCount) {
           setAllLoaded(true);
         }
       },

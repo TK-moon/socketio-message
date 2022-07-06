@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const app = express();
 const server = http.createServer(express);
+const dayjs = require("dayjs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
@@ -70,7 +71,6 @@ app.get("/chat/room/list", (req, res) => {
 });
 
 app.get("/chat/room/detail", (req, res) => {
-  console.log(req.query);
   const queryWithBaseID = `AND id < ${req.query.baseID}`;
   const dataQuery = `
   SELECT
@@ -151,7 +151,12 @@ chatNamespace.on("connection", function (socket) {
     db.query(
       `INSERT INTO chat_message(body, is_read, sender_id, receiver_id, type) VALUES('${data.body}', '${isRead}', ${data.senderUID}, ${data.receiverUID}, 'message')`
     );
-    io.of("/chat").to(roomID).emit("message", data);
+    console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+    const response = {
+      ...data,
+      created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    };
+    io.of("/chat").to(roomID).emit("message", response);
   });
 
   socket.on("leave-room", (data) => {

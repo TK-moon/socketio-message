@@ -132,26 +132,6 @@ const ChatDetail = ({
         <Style.ChatMessageContainer>
           <ChatMessageListItem list={prevMessageList} myUID={userInfo.id} />
           <ChatMessageListItem list={nextMessageList} myUID={userInfo.id} />
-          {/* {prevMessageList.map((message: any, index: number) => {
-            return (
-              <Style.ChatMessageListItem
-                key={`${index}-${message.body}`}
-                isMyMessage={userInfo.id === message.sender_id}
-              >
-                <div>{message.body}</div>
-              </Style.ChatMessageListItem>
-            );
-          })}
-          {nextMessageList.map((message: any, index: number) => {
-            return (
-              <Style.ChatMessageListItem
-                key={`${index}-${message.body}`}
-                isMyMessage={userInfo.id === message.sender_id}
-              >
-                <div>{message.body}</div>
-              </Style.ChatMessageListItem>
-            );
-          })} */}
         </Style.ChatMessageContainer>
       </Style.Section>
       <Style.Footer>
