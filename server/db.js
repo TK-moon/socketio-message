@@ -5,6 +5,7 @@ const connection = mysql.createConnection({
   user: "root",
   password: "root",
   database: "chat",
+  multipleStatements: true,
 });
 
 connection.connect((error) => {

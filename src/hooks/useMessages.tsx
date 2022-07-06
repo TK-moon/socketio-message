@@ -6,32 +6,36 @@ import { getPastMessages } from "../api";
 interface useMessageProps {
   senderUID: string;
   receiverUID: string;
-  page: number;
+  baseID: string | null;
   socket: Socket;
 }
 
 const useMessages = ({
   senderUID,
   receiverUID,
-  page,
+  baseID,
   socket,
 }: useMessageProps) => {
+  const [totalCount, setTotalCount] = useState<number | null>(null);
   const [prevMessageList, setPrevMessageList] = useState<any>([]);
   const [nextMessageList, setNextMessageList] = useState<any>([]);
 
   useQuery(
-    ["past-messages", page],
+    ["past-messages", baseID],
     () =>
       getPastMessages({
         senderUID: senderUID,
         receiverUID: receiverUID,
-        page: page,
+        baseID: baseID,
       }),
     {
       onSuccess: (data) => {
         console.log("success", data);
-        setPrevMessageList([...data, ...prevMessageList]);
+        setPrevMessageList([...data.list, ...prevMessageList]);
+        setTotalCount(data.totalCount);
       },
+      enabled:
+        (totalCount || 0) >= prevMessageList.length + nextMessageList.length,
     }
   );
 

@@ -18,8 +18,7 @@ export const getChatRoomList = async (UID: string) => {
   return response.data
 }
 
-export const getPastMessages = async ({senderUID, receiverUID, page}: { senderUID: string, receiverUID: string, page: number }) => {
-  const skip = (page - 1) * 10
-  const response = await api.get('/chat/room/detail', { params: { senderUID, receiverUID, skip: skip, limit: 30 } })
+export const getPastMessages = async ({senderUID, receiverUID, baseID}: { senderUID: string, receiverUID: string, baseID: string | null }) => {
+  const response = await api.get('/chat/room/detail', { params: { senderUID, receiverUID, baseID: baseID, limit: 30 } })
   return response.data
 }

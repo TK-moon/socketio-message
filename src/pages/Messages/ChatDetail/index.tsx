@@ -34,12 +34,12 @@ const ChatDetail = ({
   const location = useLocation();
   const receiverUID = extractNumber(location.hash);
   const [message, setMessage] = useState("");
-  const [page, setPage] = useState(1);
+  const [baseID, setBaseID] = useState<string | null>(null);
 
   const { prevMessageList, nextMessageList } = useMessages({
     senderUID: userInfo.id,
     receiverUID,
-    page,
+    baseID,
     socket,
   });
 
@@ -73,7 +73,7 @@ const ChatDetail = ({
   const debounceSetNextPage = useCallback(
     debounce(() => {
       setPrevScrollHeight(containerRef.current?.scrollHeight);
-      setPage(page + 1);
+      setBaseID("0");
     }, 300),
     [prevMessageList]
   );
@@ -92,7 +92,8 @@ const ChatDetail = ({
     }
 
     if (prevScrollHeight) {
-      console.log("asdf");
+      const lastData = prevMessageList[prevMessageList.length - 1].id;
+      setBaseID(lastData);
     } else {
       scrollToBottom({ containerRef, when: "always" });
     }
@@ -119,16 +120,13 @@ const ChatDetail = ({
             return <li key={`${index}-${message.body}`}>{message.body}</li>;
           })}
         </ul>
-        <Style.Footer>
-          <form onSubmit={onSubmit}>
-            <input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <button>SEND</button>
-          </form>
-        </Style.Footer>
       </Style.Section>
+      <Style.Footer>
+        <form onSubmit={onSubmit}>
+          <input value={message} onChange={(e) => setMessage(e.target.value)} />
+          <button>SEND</button>
+        </form>
+      </Style.Footer>
     </>
   );
 };

@@ -70,17 +70,38 @@ app.get("/chat/room/list", (req, res) => {
 });
 
 app.get("/chat/room/detail", (req, res) => {
-  const query = `
+  const queryWithBaseID = `AND id < ${req.query.baseID}`;
+  const dataQuery = `
   SELECT
   *,
   (SELECT username from user WHERE id=sender_id) as senderName,
   (SELECT username from user WHERE id=receiver_id) as receiverName
   FROM chat_message
-  WHERE sender_id=${req.query.senderUID} AND receiver_id=${req.query.receiverUID} OR sender_id=${req.query.receiverUID} AND receiver_id=${req.query.senderUID}
-  LIMIT ${req.query.skip}, ${req.query.limit};
+  WHERE sender_id=${req.query.senderUID} AND receiver_id=${
+    req.query.receiverUID
+  }
+  OR sender_id=${req.query.receiverUID} AND receiver_id=${req.query.senderUID}
+  ${req.query.baseID ? queryWithBaseID : ""}
+  ORDER BY created_at DESC
+  LIMIT ${req.query.limit};
   `;
+
+  const countQuery = `
+  SELECT
+  count(*) as totalCount
+  FROM chat_message
+  WHERE sender_id=${req.query.senderUID} AND receiver_id=${req.query.receiverUID} OR
+  sender_id=${req.query.receiverUID} AND receiver_id=${req.query.senderUID};
+  `;
+
+  const query = `${dataQuery}${countQuery}`;
+
   db.query(query, (error, result) => {
-    res.json(result);
+    const data = {
+      list: result[0].reverse(),
+      totalCount: result[1][0].totalCount,
+    };
+    res.json(data);
   });
 });
 
