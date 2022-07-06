@@ -68,17 +68,19 @@ const ChatDetail = ({
   };
 
   useEffect(() => {
+    console.log("UID", userInfo.id, receiverUID);
+    if (!userInfo.id) return;
     socket.emit("enter-room", { senderUID: userInfo.id, receiverUID });
     return () => {
       socket.emit("leave-room", { senderUID: userInfo.id, receiverUID });
     };
-  }, []);
+  }, [userInfo.id]);
 
   const debounceSetNextPage = useCallback(
     debounce(() => {
       setPrevScrollHeight(containerRef.current?.scrollHeight);
       const lastData = prevMessageList[0].id;
-      console.log("setBaseID", lastData);
+      // console.log("setBaseID", lastData);
       setBaseID(lastData);
     }, 300),
     [prevMessageList]

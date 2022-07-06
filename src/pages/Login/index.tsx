@@ -10,7 +10,10 @@ const LoginPage = () => {
   const location = useLocation();
 
   const locationState = location.state as { from: Location };
-  const from = locationState.from.pathname || "/";
+  const from = {
+    pathname: locationState.from.pathname || "/",
+    hash: locationState.from.hash || "",
+  };
 
   const dispatchStore = useContext(DispatchContext);
   const authSessionStorage = useCallback(
