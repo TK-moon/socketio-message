@@ -16,8 +16,10 @@ const useMessages = ({
   page,
   socket,
 }: useMessageProps) => {
+  const [prevMessageList, setPrevMessageList] = useState<any>([]);
   const [nextMessageList, setNextMessageList] = useState<any>([]);
-  const { data: prevMessageList } = useQuery(
+
+  useQuery(
     ["past-messages", page],
     () =>
       getPastMessages({
@@ -25,7 +27,12 @@ const useMessages = ({
         receiverUID: receiverUID,
         page: page,
       }),
-    {}
+    {
+      onSuccess: (data) => {
+        console.log(data);
+        setPrevMessageList([...prevMessageList, ...data]);
+      },
+    }
   );
 
   const onMessage = useCallback(

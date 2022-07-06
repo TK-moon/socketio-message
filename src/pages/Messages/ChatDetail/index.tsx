@@ -1,8 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import { getPastMessages } from "../../../api";
 import useMessages from "../../../hooks/useMessages";
 import { extractNumber } from "../../../lib/utils";
 import * as Style from "./index.style";
@@ -58,8 +56,8 @@ const ChatDetail = ({
       </Style.Header>
       <Style.Section>
         <ul>
-          {prevMessageList?.map((message: any) => {
-            return <li key={message.id}>{message.body}</li>;
+          {prevMessageList?.map((message: any, index: number) => {
+            return <li key={`${index}-${message.body}`}>{message.body}</li>;
           })}
           {nextMessageList.map((message: any, index: number) => {
             return <li key={`${index}-${message.body}`}>{message.body}</li>;
