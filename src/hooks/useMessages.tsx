@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Socket } from "socket.io-client";
 import { getPastMessages } from "../api";
@@ -28,10 +28,10 @@ const useMessages = ({
     {}
   );
 
-  const onMessage = (data: any) => {
-    console.log(nextMessageList);
-    setNextMessageList([...nextMessageList, data]);
-  };
+  const onMessage = useCallback(
+    (data: any) => setNextMessageList([...nextMessageList, data]),
+    [nextMessageList]
+  );
 
   useEffect(() => {
     socket.on("message", onMessage);
