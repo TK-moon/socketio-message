@@ -10,7 +10,6 @@ const useChatRoomList = (UID: string) => {
     () => getChatRoomList(UID),
     {
       onSuccess: (data) => {
-        console.log(data)
         setChatRoomList(data)
       }
     }

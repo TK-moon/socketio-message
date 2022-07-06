@@ -79,3 +79,7 @@ export const scrollToBottom = ({ containerRef, when, bottomMargin, isBehaviorSmo
       containerElement.scrollTo(scrollToOptions);
   }
 };
+
+export const scrollToPosition = (ref: React.RefObject<HTMLElement>, position?: number, behaviorSmooth?: boolean) => {
+  ref.current?.scrollTo({ top: position, behavior: behaviorSmooth ? 'smooth' : 'auto' });
+};

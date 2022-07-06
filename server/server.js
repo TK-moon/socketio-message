@@ -77,11 +77,17 @@ app.get("/chat/room/detail", (req, res) => {
   (SELECT username from user WHERE id=sender_id) as senderName,
   (SELECT username from user WHERE id=receiver_id) as receiverName
   FROM chat_message
-  WHERE sender_id=${req.query.senderUID} AND receiver_id=${
-    req.query.receiverUID
-  }
-  OR sender_id=${req.query.receiverUID} AND receiver_id=${req.query.senderUID}
+  WHERE
+  1
   ${req.query.baseID ? queryWithBaseID : ""}
+  AND (
+    sender_id=${req.query.senderUID} AND
+    receiver_id=${req.query.receiverUID}
+  )
+  OR (
+    sender_id=${req.query.receiverUID} AND
+    receiver_id=${req.query.senderUID}
+  )
   ORDER BY created_at DESC
   LIMIT ${req.query.limit};
   `;
@@ -94,9 +100,15 @@ app.get("/chat/room/detail", (req, res) => {
   sender_id=${req.query.receiverUID} AND receiver_id=${req.query.senderUID};
   `;
 
-  const query = `${dataQuery}${countQuery}`;
+  const query = dataQuery + countQuery;
 
-  db.query(query, (error, result) => {
+  db.query(query, (error, result, field) => {
+    console.log(
+      "baseID : ",
+      req.query.baseID,
+      "| result baseID : ",
+      result[0][0].id
+    );
     const data = {
       list: result[0].reverse(),
       totalCount: result[1][0].totalCount,

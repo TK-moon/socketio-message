@@ -11,8 +11,13 @@ import { Socket } from "socket.io-client";
 import { debounce } from "lodash";
 import useIntersectionObserver from "../../../hooks/useIntersectionObserver";
 import useMessages from "../../../hooks/useMessages";
-import { extractNumber, scrollToBottom } from "../../../lib/utils";
+import {
+  extractNumber,
+  scrollToBottom,
+  scrollToPosition,
+} from "../../../lib/utils";
 import * as Style from "./index.style";
+import ChatMessageListItem from "./ChatMessageListItem";
 
 interface ChatDetailProps {
   onLeaveRoomClick: (senderUID: string, receiverUID: string) => void;
@@ -63,7 +68,6 @@ const ChatDetail = ({
   };
 
   useEffect(() => {
-    scrollToBottom({ containerRef, when: "always", isBehaviorSmooth: true });
     socket.emit("enter-room", { senderUID: userInfo.id, receiverUID });
     return () => {
       socket.emit("leave-room", { senderUID: userInfo.id, receiverUID });
@@ -73,7 +77,7 @@ const ChatDetail = ({
   const debounceSetNextPage = useCallback(
     debounce(() => {
       setPrevScrollHeight(containerRef.current?.scrollHeight);
-      const lastData = prevMessageList[prevMessageList.length - 1].id;
+      const lastData = prevMessageList[0].id;
       console.log("setBaseID", lastData);
       setBaseID(lastData);
     }, 300),
@@ -93,9 +97,16 @@ const ChatDetail = ({
     }
 
     if (prevScrollHeight) {
+      // const nextScrollHeight =
+      //   containerRef.current.scrollHeight - prevScrollHeight;
+      // scrollToPosition(containerRef, nextScrollHeight);
     } else {
       scrollToBottom({ containerRef, when: "always" });
     }
+  }, [prevMessageList]);
+
+  useEffect(() => {
+    console.log("length", prevMessageList.length);
   }, [prevMessageList]);
 
   useEffect(() => {
@@ -113,14 +124,30 @@ const ChatDetail = ({
       </Style.Header>
       <Style.Section ref={containerRef}>
         <div ref={prevChatLoaderObserverRef}>LOADING..</div>
-        <ul>
-          {prevMessageList?.map((message: any, index: number) => {
-            return <li key={`${index}-${message.body}`}>{message.body}</li>;
+        <Style.ChatMessageContainer>
+          <ChatMessageListItem list={prevMessageList} myUID={userInfo.id} />
+          <ChatMessageListItem list={nextMessageList} myUID={userInfo.id} />
+          {/* {prevMessageList.map((message: any, index: number) => {
+            return (
+              <Style.ChatMessageListItem
+                key={`${index}-${message.body}`}
+                isMyMessage={userInfo.id === message.sender_id}
+              >
+                <div>{message.body}</div>
+              </Style.ChatMessageListItem>
+            );
           })}
           {nextMessageList.map((message: any, index: number) => {
-            return <li key={`${index}-${message.body}`}>{message.body}</li>;
-          })}
-        </ul>
+            return (
+              <Style.ChatMessageListItem
+                key={`${index}-${message.body}`}
+                isMyMessage={userInfo.id === message.sender_id}
+              >
+                <div>{message.body}</div>
+              </Style.ChatMessageListItem>
+            );
+          })} */}
+        </Style.ChatMessageContainer>
       </Style.Section>
       <Style.Footer>
         <form onSubmit={onSubmit}>

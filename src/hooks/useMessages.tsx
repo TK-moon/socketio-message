@@ -22,14 +22,17 @@ const useMessages = ({
 
   useQuery(
     ["past-messages", baseID],
-    () =>
-      getPastMessages({
+    () => {
+      console.log("baseID", baseID);
+      return getPastMessages({
         senderUID: senderUID,
         receiverUID: receiverUID,
         baseID: baseID,
-      }),
+      });
+    },
     {
       onSuccess: (data) => {
+        // @BUG : Safari bug
         console.log("success", data);
         setPrevMessageList([...data.list, ...prevMessageList]);
         setTotalCount(data.totalCount);
