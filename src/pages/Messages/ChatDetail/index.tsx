@@ -36,7 +36,7 @@ const ChatDetail = ({
   const [message, setMessage] = useState("");
   const [baseID, setBaseID] = useState<string | null>(null);
 
-  const { prevMessageList, nextMessageList } = useMessages({
+  const { prevMessageList, nextMessageList, totalCount } = useMessages({
     senderUID: userInfo.id,
     receiverUID,
     baseID,
@@ -73,7 +73,9 @@ const ChatDetail = ({
   const debounceSetNextPage = useCallback(
     debounce(() => {
       setPrevScrollHeight(containerRef.current?.scrollHeight);
-      setBaseID("0");
+      const lastData = prevMessageList[prevMessageList.length - 1].id;
+      console.log("setBaseID", lastData);
+      setBaseID(lastData);
     }, 300),
     [prevMessageList]
   );
@@ -81,7 +83,6 @@ const ChatDetail = ({
   useLayoutEffect(() => {
     if (!prevMessageList.length) return;
     if (prevChatLoaderEntry?.isIntersecting) {
-      console.log("trigger", prevChatLoaderEntry?.isIntersecting);
       debounceSetNextPage();
     }
   }, [prevChatLoaderEntry?.isIntersecting]);
@@ -92,8 +93,6 @@ const ChatDetail = ({
     }
 
     if (prevScrollHeight) {
-      const lastData = prevMessageList[prevMessageList.length - 1].id;
-      setBaseID(lastData);
     } else {
       scrollToBottom({ containerRef, when: "always" });
     }
@@ -109,6 +108,8 @@ const ChatDetail = ({
         <button onClick={() => onLeaveRoomClick(userInfo.id, receiverUID)}>
           BACK
         </button>
+        {baseID}
+        <p>total : {totalCount}</p>
       </Style.Header>
       <Style.Section ref={containerRef}>
         <div ref={prevChatLoaderObserverRef}>LOADING..</div>

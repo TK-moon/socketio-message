@@ -59,9 +59,9 @@ app.get("/chat/room/list", (req, res) => {
   (SELECT username from user WHERE id=receiver_id) as receiverName,
   MAX(chat_message.created_at) as recentMessageTime
   FROM chat_message
-  WHERE chat_message.sender_id='${req.query.UID}' OR chat_message.receiver_id='${req.query.UID}'
+  WHERE chat_message.sender_id=${req.query.UID} OR chat_message.receiver_id=${req.query.UID}
   GROUP BY sender_id, receiver_id
-  HAVING sender_id='${req.query.UID}'
+  HAVING sender_id=${req.query.UID} or receiver_id=${req.query.UID}
   ORDER BY recentMessageTime DESC
   `;
   db.query(query, (err, result) => {

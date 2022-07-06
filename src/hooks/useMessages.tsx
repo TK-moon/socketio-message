@@ -48,7 +48,7 @@ const useMessages = ({
     socket.on("message", onMessage);
   }, [onMessage, socket]);
 
-  return { prevMessageList, nextMessageList };
+  return { prevMessageList, nextMessageList, totalCount };
 };
 
 export default useMessages;
