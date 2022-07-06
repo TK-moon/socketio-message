@@ -6,10 +6,13 @@ export const SubHeader = _SubHeader
 
 export const Section = styled.div`
   position: relative;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
 `
 
 export const Footer = styled.div`
-  position: absolute;
+  position: sticky;
   left: 0;
   bottom: 0;
   right: 0;
