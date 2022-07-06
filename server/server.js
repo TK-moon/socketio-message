@@ -104,13 +104,6 @@ app.get("/chat/room/detail", (req, res) => {
   const query = dataQuery + countQuery;
 
   db.query(query, (error, result, field) => {
-    console.log("baseID", req.query.baseID, result[0][0]?.id);
-    // console.log(
-    //   "baseID : ",
-    //   req.query.baseID,
-    //   "| result baseID : ",
-    //   result[0][0]?.id
-    // );
     const data = {
       list: result[0].reverse(),
       totalCount: result[1][0].totalCount,

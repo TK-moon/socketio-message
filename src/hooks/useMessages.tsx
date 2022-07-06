@@ -16,9 +16,10 @@ const useMessages = ({
   baseID,
   socket,
 }: useMessageProps) => {
-  const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [prevMessageList, setPrevMessageList] = useState<any>([]);
   const [nextMessageList, setNextMessageList] = useState<any>([]);
+  const [allLoaded, setAllLoaded] = useState<boolean>(false);
 
   useQuery(
     ["past-messages", baseID],
@@ -30,13 +31,14 @@ const useMessages = ({
       }),
     {
       onSuccess: (data) => {
-        // @BUG : Safari bug
-        console.log("success", data);
-        setPrevMessageList([...data.list, ...prevMessageList]);
+        const newList = [...data.list, ...prevMessageList];
+        setPrevMessageList(newList);
         setTotalCount(data.totalCount);
+        if (newList.length === totalCount) {
+          setAllLoaded(true);
+        }
       },
-      enabled:
-        (totalCount || 0) >= prevMessageList.length + nextMessageList.length,
+      enabled: !allLoaded,
     }
   );
 
@@ -49,7 +51,7 @@ const useMessages = ({
     socket.on("message", onMessage);
   }, [onMessage, socket]);
 
-  return { prevMessageList, nextMessageList, totalCount };
+  return { prevMessageList, nextMessageList, totalCount, allLoaded };
 };
 
 export default useMessages;

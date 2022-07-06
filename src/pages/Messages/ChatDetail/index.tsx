@@ -41,12 +41,13 @@ const ChatDetail = ({
   const [message, setMessage] = useState("");
   const [baseID, setBaseID] = useState<string | null>(null);
 
-  const { prevMessageList, nextMessageList, totalCount } = useMessages({
-    senderUID: userInfo.id,
-    receiverUID,
-    baseID,
-    socket,
-  });
+  const { prevMessageList, nextMessageList, totalCount, allLoaded } =
+    useMessages({
+      senderUID: userInfo.id,
+      receiverUID,
+      baseID,
+      socket,
+    });
 
   const prevChatLoaderEntry = useIntersectionObserver(
     prevChatLoaderObserverRef,
@@ -99,9 +100,9 @@ const ChatDetail = ({
     }
 
     if (prevScrollHeight) {
-      // const nextScrollHeight =
-      //   containerRef.current.scrollHeight - prevScrollHeight;
-      // scrollToPosition(containerRef, nextScrollHeight);
+      const nextScrollHeight =
+        containerRef.current.scrollHeight - prevScrollHeight;
+      scrollToPosition(containerRef, nextScrollHeight);
     } else {
       scrollToBottom({ containerRef, when: "always" });
     }
@@ -125,7 +126,9 @@ const ChatDetail = ({
         <p>total : {totalCount}</p>
       </Style.Header>
       <Style.Section ref={containerRef}>
-        <div ref={prevChatLoaderObserverRef}>LOADING..</div>
+        <div ref={prevChatLoaderObserverRef}>
+          {allLoaded ? "All Loaded" : "LOADING..."}
+        </div>
         <Style.ChatMessageContainer>
           <ChatMessageListItem list={prevMessageList} myUID={userInfo.id} />
           <ChatMessageListItem list={nextMessageList} myUID={userInfo.id} />
