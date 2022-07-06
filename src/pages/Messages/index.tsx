@@ -15,8 +15,7 @@ const Messages = () => {
     () => socket("localhost:3002/chat", { path: "/io" }),
     []
   );
-  const { key } = useLocation();
-
+  const { hash, key } = useLocation();
   const { data: chatRoomList } = useChatRoomList(userInfo.id);
 
   const navigate = useNavigate();
@@ -34,29 +33,31 @@ const Messages = () => {
   return (
     <>
       <Style.Container>
-        <Style.Panel>
-          <ChatRoomList
-            chatRoomList={chatRoomList}
-            socket={io}
-            onCreateRoomClick={onCreateRoomClick}
-            userUID={userInfo.id}
-          />
-        </Style.Panel>
-        <Style.Panel>
-          <Routes>
-            <Route
-              path="/detail"
-              element={
-                <ChatDetail
-                  socket={io}
-                  onLeaveRoomClick={onLeaveRoomClick}
-                  userInfo={userInfo}
-                  key={key}
-                />
-              }
-            ></Route>
-          </Routes>
-        </Style.Panel>
+        <Style.PanelContainer isInRoom={Boolean(hash)}>
+          <Style.Panel>
+            <ChatRoomList
+              chatRoomList={chatRoomList}
+              socket={io}
+              onCreateRoomClick={onCreateRoomClick}
+              userUID={userInfo.id}
+            />
+          </Style.Panel>
+          <Style.Panel>
+            <Routes>
+              <Route
+                path="/detail"
+                element={
+                  <ChatDetail
+                    socket={io}
+                    onLeaveRoomClick={onLeaveRoomClick}
+                    userInfo={userInfo}
+                    key={key}
+                  />
+                }
+              ></Route>
+            </Routes>
+          </Style.Panel>
+        </Style.PanelContainer>
       </Style.Container>
     </>
   );

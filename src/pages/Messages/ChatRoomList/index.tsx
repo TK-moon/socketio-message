@@ -55,7 +55,6 @@ const ChatRoomList = ({
                     hash: getRoomAnchorHash(item, userUID),
                   }}
                 >
-                  {getRoomAnchorHash(item, userUID)}
                   <p>{item.senderName}</p>
                   <p>{item.recentMessage}</p>
                 </Link>
