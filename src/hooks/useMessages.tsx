@@ -22,14 +22,12 @@ const useMessages = ({
 
   useQuery(
     ["past-messages", baseID],
-    () => {
-      console.log("baseID", baseID);
-      return getPastMessages({
+    () =>
+      getPastMessages({
         senderUID: senderUID,
         receiverUID: receiverUID,
         baseID: baseID,
-      });
-    },
+      }),
     {
       onSuccess: (data) => {
         // @BUG : Safari bug

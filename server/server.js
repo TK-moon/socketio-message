@@ -70,6 +70,7 @@ app.get("/chat/room/list", (req, res) => {
 });
 
 app.get("/chat/room/detail", (req, res) => {
+  console.log(req.query);
   const queryWithBaseID = `AND id < ${req.query.baseID}`;
   const dataQuery = `
   SELECT
@@ -80,14 +81,14 @@ app.get("/chat/room/detail", (req, res) => {
   WHERE
   1
   ${req.query.baseID ? queryWithBaseID : ""}
-  AND (
+  AND ((
     sender_id=${req.query.senderUID} AND
     receiver_id=${req.query.receiverUID}
   )
   OR (
     sender_id=${req.query.receiverUID} AND
     receiver_id=${req.query.senderUID}
-  )
+  ))
   ORDER BY created_at DESC
   LIMIT ${req.query.limit};
   `;
@@ -103,12 +104,13 @@ app.get("/chat/room/detail", (req, res) => {
   const query = dataQuery + countQuery;
 
   db.query(query, (error, result, field) => {
-    console.log(
-      "baseID : ",
-      req.query.baseID,
-      "| result baseID : ",
-      result[0][0].id
-    );
+    console.log("baseID", req.query.baseID, result[0][0]?.id);
+    // console.log(
+    //   "baseID : ",
+    //   req.query.baseID,
+    //   "| result baseID : ",
+    //   result[0][0]?.id
+    // );
     const data = {
       list: result[0].reverse(),
       totalCount: result[1][0].totalCount,
