@@ -39,3 +39,43 @@ export const initSessionStorage = (key: SESSION_STORAGE_KEYS_TYPE) => {
 export const extractNumber = (hash: string) => {
   return hash.replace(/[^0-9]/g, "");
 };
+
+export const getIsScrollOnBottom = (element: Element, _margin?: number) => {
+  const margin = _margin ?? 0;
+  return element.scrollHeight - margin <= element.clientHeight + element.scrollTop;
+};
+
+interface scrollToBottomInterface {
+  containerRef: React.RefObject<HTMLElement>;
+  when: 'always' | 'onBottom';
+  bottomMargin?: number;
+  isBehaviorSmooth?: boolean;
+}
+
+export const scrollToBottom = ({ containerRef, when, bottomMargin, isBehaviorSmooth }: scrollToBottomInterface) => {
+  const containerElement = containerRef.current;
+  if (!containerElement) {
+    return;
+  }
+
+  const lastElementChild = containerElement.lastElementChild;
+  if (!lastElementChild) {
+    return;
+  }
+
+  const bottomScrollPosition = containerElement.scrollHeight - containerElement.clientHeight;
+  const scrollToOptions: ScrollToOptions = {
+    top: bottomScrollPosition,
+    behavior: isBehaviorSmooth ? 'smooth' : 'auto',
+  };
+
+  switch (when) {
+    case 'onBottom':
+      if (getIsScrollOnBottom(containerElement, bottomMargin)) {
+        containerElement.scrollTo(scrollToOptions);
+      }
+      break;
+    case 'always':
+      containerElement.scrollTo(scrollToOptions);
+  }
+};

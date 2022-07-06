@@ -29,8 +29,8 @@ const useMessages = ({
       }),
     {
       onSuccess: (data) => {
-        console.log(data);
-        setPrevMessageList([...prevMessageList, ...data]);
+        console.log("success", data);
+        setPrevMessageList([...data, ...prevMessageList]);
       },
     }
   );

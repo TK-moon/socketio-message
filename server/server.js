@@ -48,9 +48,8 @@ app.get("/user/list", (req, res) => {
 
 app.get("/chat/room/list", (req, res) => {
   /**
-   * @BUG
-   * senderid와 receiverid를 GROUP BY 해서 문제
-   * 채팅방 이름 컬럼 추가하기
+   * @TODO
+   * Total count 추가하여 전체 로딩되면 추가 로딩 불가능하도록 useQuery 옵션 추가
    */
   const query = `
   SELECT
