@@ -10,6 +10,16 @@ interface useMessageProps {
   socket: Socket;
 }
 
+export interface MessageInterface {
+  id: string;
+  senderUsername: string;
+  receiverUsername: string;
+  senderUID: string;
+  receiverUID: string;
+  body: string;
+  created_at: Date;
+}
+
 const useMessages = ({
   senderUID,
   receiverUID,
@@ -17,8 +27,12 @@ const useMessages = ({
   socket,
 }: useMessageProps) => {
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [prevMessageList, setPrevMessageList] = useState<any>([]);
-  const [nextMessageList, setNextMessageList] = useState<any>([]);
+  const [prevMessageList, setPrevMessageList] = useState<MessageInterface[]>(
+    []
+  );
+  const [nextMessageList, setNextMessageList] = useState<MessageInterface[]>(
+    []
+  );
   const [allLoaded, setAllLoaded] = useState<boolean>(false);
 
   useQuery(
@@ -45,7 +59,7 @@ const useMessages = ({
   );
 
   const onMessage = useCallback(
-    (data: any) => setNextMessageList([...nextMessageList, data]),
+    (data: MessageInterface) => setNextMessageList([...nextMessageList, data]),
     [nextMessageList]
   );
 

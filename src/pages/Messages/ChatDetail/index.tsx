@@ -69,7 +69,6 @@ const ChatDetail = ({
   };
 
   useEffect(() => {
-    console.log("UID", userInfo.id, receiverUID);
     if (!userInfo.id) return;
     socket.emit("enter-room", { senderUID: userInfo.id, receiverUID });
     return () => {
@@ -77,12 +76,11 @@ const ChatDetail = ({
     };
   }, [userInfo.id]);
 
-  const debounceSetNextPage = useCallback(
+  const debounceSetBaseIdForPrevMesasge = useCallback(
     debounce(() => {
       setPrevScrollHeight(containerRef.current?.scrollHeight);
-      const lastData = prevMessageList[0].id;
-      // console.log("setBaseID", lastData);
-      setBaseID(lastData);
+      const topMessageID = prevMessageList[0].id;
+      setBaseID(topMessageID);
     }, 300),
     [prevMessageList]
   );
@@ -90,7 +88,7 @@ const ChatDetail = ({
   useLayoutEffect(() => {
     if (!prevMessageList.length) return;
     if (prevChatLoaderEntry?.isIntersecting) {
-      debounceSetNextPage();
+      debounceSetBaseIdForPrevMesasge();
     }
   }, [prevChatLoaderEntry?.isIntersecting]);
 
@@ -106,10 +104,6 @@ const ChatDetail = ({
     } else {
       scrollToBottom({ containerRef, when: "always" });
     }
-  }, [prevMessageList]);
-
-  useEffect(() => {
-    console.log("length", prevMessageList.length);
   }, [prevMessageList]);
 
   useEffect(() => {

@@ -74,9 +74,13 @@ app.get("/chat/room/detail", (req, res) => {
   const queryWithBaseID = `AND id < ${req.query.baseID}`;
   const dataQuery = `
   SELECT
-  *,
-  (SELECT username from user WHERE id=sender_id) as senderName,
-  (SELECT username from user WHERE id=receiver_id) as receiverName
+  id,
+  sender_id as senderUID,
+  receiver_id as receiverUID,
+  body,
+  created_at,
+  (SELECT username from user WHERE id=sender_id) as senderUsername,
+  (SELECT username from user WHERE id=receiver_id) as receiverUsername
   FROM chat_message
   WHERE
   1
@@ -149,14 +153,20 @@ chatNamespace.on("connection", function (socket) {
     const isRead = isAnotherUserInRoom ? 1 : 0;
     // const isOnline = socket.adapter.rooms.get(roomID).length > 1;
     db.query(
-      `INSERT INTO chat_message(body, is_read, sender_id, receiver_id, type) VALUES('${data.body}', '${isRead}', ${data.senderUID}, ${data.receiverUID}, 'message')`
+      `
+      INSERT INTO
+      chat_message(body, is_read, sender_id, receiver_id, type)
+      VALUES('${data.body}', '${isRead}', ${data.senderUID}, ${data.receiverUID}, 'message')
+      `,
+      (error, result) => {
+        const response = {
+          ...data,
+          id: result.insertId,
+          created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        };
+        io.of("/chat").to(roomID).emit("message", response);
+      }
     );
-    console.log(dayjs().format("YYYY-MM-DD HH:mm:ss"));
-    const response = {
-      ...data,
-      created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-    };
-    io.of("/chat").to(roomID).emit("message", response);
   });
 
   socket.on("leave-room", (data) => {

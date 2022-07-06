@@ -1,25 +1,23 @@
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import * as Style from "./ChatMessageListItem.style";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import { MessageInterface } from "../../../hooks/useMessages";
 dayjs.extend(utc);
 
 interface ChatMessageListItemProps {
-  list: any;
+  list: MessageInterface[];
   myUID: string;
 }
 
 const ChatMessageListItem = (props: ChatMessageListItemProps) => {
-  // useEffect(() => {
-  //   console.log(props.list);
-  // }, [props.list]);
   return (
     <>
-      {props.list.map((message: any, index: number) => {
+      {props.list.map((message: MessageInterface) => {
         return (
           <Style.ChatMessageListItem
-            key={`${index}-${message.body}`}
-            isMyMessage={props.myUID === message.sender_id}
+            key={message.id}
+            isMyMessage={props.myUID === message.senderUID}
           >
             <div>{message.body}</div>
             <div>{dayjs(message.created_at).format("YYYY-MM-DD HH:mm:ss")}</div>
