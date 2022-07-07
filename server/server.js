@@ -92,7 +92,7 @@ app.get("/chat/room/detail", (req, res) => {
     sender_id=${req.query.receiverUID} AND
     receiver_id=${req.query.senderUID}
   ))
-  ORDER BY created_at DESC
+  ORDER BY created_at DESC, id DESC
   LIMIT ${req.query.limit};
   `;
 
@@ -100,8 +100,11 @@ app.get("/chat/room/detail", (req, res) => {
   SELECT
   count(*) as totalCount
   FROM chat_message
-  WHERE sender_id=${req.query.senderUID} AND receiver_id=${req.query.receiverUID} OR
-  sender_id=${req.query.receiverUID} AND receiver_id=${req.query.senderUID};
+  WHERE (
+    (sender_id=${req.query.senderUID} AND receiver_id=${req.query.receiverUID})
+    OR
+    (sender_id=${req.query.receiverUID} AND receiver_id=${req.query.senderUID})
+  );
   `;
 
   const query = dataQuery + countQuery;
