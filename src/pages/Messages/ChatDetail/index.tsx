@@ -114,8 +114,6 @@ const ChatDetail = ({
     <>
       <Style.Header>
         <button onClick={() => onLeaveRoomClick()}>BACK</button>
-        {baseID}
-        <p>total : {totalCount}</p>
       </Style.Header>
       <Style.Section ref={containerRef}>
         <div ref={prevChatLoaderObserverRef}>

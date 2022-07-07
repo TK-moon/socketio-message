@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getUserList } from "../../../api";
 import Modal from "../../../components/Modal";
 import * as Style from "./index.style";
 import { Socket } from "socket.io-client";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { ChatRoomListInerface } from "../../../hooks/useChatRoomList";
+import { DispatchContext } from "../../../store/authProvider";
+import { initSessionStorage, SESSION_STORAGE_KEYS } from "../../../lib/utils";
 
 interface ChatRoomListProp {
   chatRoomList: ChatRoomListInerface[];
@@ -21,6 +23,12 @@ const ChatRoomList = ({
   onCreateRoomClick,
   userUID,
 }: ChatRoomListProp) => {
+  const navigate = useNavigate();
+  const dispatchStore = useContext(DispatchContext);
+  const authSessionStorage = useCallback(
+    () => initSessionStorage(SESSION_STORAGE_KEYS.AUTH),
+    []
+  )();
   const [modalVisible, setModalVisible] = useState(false);
 
   const { data: userList } = useQuery(["user-list"], () =>
@@ -38,10 +46,17 @@ const ChatRoomList = ({
       : String(item.senderUID);
   };
 
+  const logout = () => {
+    dispatchStore({ type: "SET_LOGOUT" });
+    authSessionStorage?.save({});
+    navigate("/");
+  };
+
   return (
     <>
       <Style.Header>
         <button onClick={() => setModalVisible(true)}>CREATE</button>
+        <button onClick={() => logout()}>LOGOUT</button>
       </Style.Header>
       <nav>
         <Style.SubHeader></Style.SubHeader>

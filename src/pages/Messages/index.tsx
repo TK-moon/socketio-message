@@ -1,6 +1,6 @@
 import * as Style from "./index.style";
 import socket, { Socket } from "socket.io-client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { StateContext } from "../../store/authProvider";
