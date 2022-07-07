@@ -1,7 +1,20 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Header as _Header, SubHeader as _SubHeader } from "../index.style";
 
-export const Header = _Header
+const SpinKeyframe = keyframes`
+  from {
+    transform: rotate(0deg)
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export const Header = styled(_Header)`
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+`
 export const SubHeader = _SubHeader
 
 export const Section = styled.div`
@@ -20,23 +33,53 @@ export const ChatMessageContainer = styled.ol`
   grid-gap: 10px;
 `
 
-// export const ChatMessageListItem = styled.li<{ isMyMessage: boolean }>`
-//   width: fit-content;
-//   font-size: 16px;
-//   max-width: 80%;
-//   align-self: ${p => p.isMyMessage ? 'flex-end' : 'flex-start'};
-//   div {
-//     display: flex;
-//     border: 1px solid black;
-//     padding: 10px 20px;
-//   }
-// `
-
 export const Footer = styled.div`
   position: sticky;
   left: 0;
   bottom: 0;
   right: 0;
-  height: 50px;
-  background-color: red;
+  background-color: transparent;
+  padding: 10px;
+  form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-gap: 10px;
+    align-items: center;
+  }
 `
+
+export const LoadingObserverContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+`
+
+export const LoadingSpinner = styled.div`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  animation-name: ${SpinKeyframe};
+  animation-duration: 2000ms;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  :before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 1px solid black;
+    content: '';
+  }
+  :after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: rotate(45deg);
+    border: 1px solid black;
+    content: '';
+  }
+`;

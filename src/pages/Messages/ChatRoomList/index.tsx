@@ -10,6 +10,9 @@ import { ChatRoomListInerface } from "../../../hooks/useChatRoomList";
 import { DispatchContext } from "../../../store/authProvider";
 import { initSessionStorage, SESSION_STORAGE_KEYS } from "../../../lib/utils";
 
+import Button from "../../../components/Button";
+import ChatRoomListItem from "./ChatRoomListItem";
+
 interface ChatRoomListProp {
   chatRoomList: ChatRoomListInerface[];
   socket: Socket;
@@ -40,12 +43,6 @@ const ChatRoomList = ({
     setModalVisible(false);
   };
 
-  const getRoomAnchorHash = (item: ChatRoomListInerface, UID: string) => {
-    return String(item.senderUID) === String(UID)
-      ? String(item.receiverUID)
-      : String(item.senderUID);
-  };
-
   const logout = () => {
     dispatchStore({ type: "SET_LOGOUT" });
     authSessionStorage?.save({});
@@ -55,42 +52,39 @@ const ChatRoomList = ({
   return (
     <>
       <Style.Header>
-        <button onClick={() => setModalVisible(true)}>CREATE</button>
-        <button onClick={() => logout()}>LOGOUT</button>
+        <Button onClick={() => setModalVisible(true)}>대화 상대 선택</Button>
+        <Button onClick={() => logout()}>LOGOUT</Button>
       </Style.Header>
       <nav>
         <Style.SubHeader></Style.SubHeader>
         <ul>
           {chatRoomList.map((item) => {
             return (
-              <li key={`${item.roomId}`}>
-                <Link
-                  to={{
-                    pathname: "detail",
-                    hash: getRoomAnchorHash(item, userUID),
-                  }}
-                >
-                  <p>{item.senderName}</p>
-                  <p>{item.recentMessage}</p>
-                </Link>
-              </li>
+              <ChatRoomListItem
+                item={item}
+                userUID={userUID}
+                key={item.roomId}
+              />
             );
           })}
         </ul>
       </nav>
       <Modal visible={modalVisible}>
-        <ul>
-          {userList?.map((user: any) => {
-            return (
-              <li onClick={() => onUserListItemClick(user.id)} key={user.id}>
-                {user.username}
-              </li>
-            );
-          })}
-        </ul>
-        <div>
-          <button onClick={() => setModalVisible(false)}>CLOSE</button>
-        </div>
+        <Style.ModalHeader>대화 상대를 선택해 주세요</Style.ModalHeader>
+        <Style.ModalBody>
+          <ul>
+            {userList?.map((user: any) => {
+              return (
+                <li onClick={() => onUserListItemClick(user.id)} key={user.id}>
+                  <Button block>{user.username}</Button>
+                </li>
+              );
+            })}
+          </ul>
+        </Style.ModalBody>
+        <Style.ModalFooter>
+          <Button onClick={() => setModalVisible(false)}>CLOSE</Button>
+        </Style.ModalFooter>
       </Modal>
     </>
   );

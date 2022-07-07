@@ -18,6 +18,8 @@ import {
 } from "../../../lib/utils";
 import * as Style from "./index.style";
 import ChatMessageListItem from "./ChatMessageListItem";
+import Button from "../../../components/Button";
+import TextInput from "../../../components/TextInput";
 
 interface ChatDetailProps {
   onLeaveRoomClick: () => void;
@@ -113,12 +115,12 @@ const ChatDetail = ({
   return (
     <>
       <Style.Header>
-        <button onClick={() => onLeaveRoomClick()}>BACK</button>
+        <Button onClick={() => onLeaveRoomClick()}>BACK</Button>
       </Style.Header>
       <Style.Section ref={containerRef}>
-        <div ref={prevChatLoaderObserverRef}>
-          {allLoaded ? "All Loaded" : "LOADING..."}
-        </div>
+        <Style.LoadingObserverContainer ref={prevChatLoaderObserverRef}>
+          {allLoaded ? "All Loaded" : <Style.LoadingSpinner />}
+        </Style.LoadingObserverContainer>
         <Style.ChatMessageContainer>
           <ChatMessageListItem list={prevMessageList} myUID={userInfo.id} />
           <ChatMessageListItem list={nextMessageList} myUID={userInfo.id} />
@@ -126,8 +128,12 @@ const ChatDetail = ({
       </Style.Section>
       <Style.Footer>
         <form onSubmit={onSubmit}>
-          <input value={message} onChange={(e) => setMessage(e.target.value)} />
-          <button>SEND</button>
+          <TextInput
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            block
+          />
+          <Button>SEND</Button>
         </form>
       </Style.Footer>
     </>
